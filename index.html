@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tailor Shop Management</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f3f5f8;
+    color:#d710c3;
+}
+
+header{
+    background:#1f2937;
+    color:hwb(136 8% 11%);
+    padding:18px;
+    text-align:center;
+}
+
+header h1{
+    margin:0;
+    font-size:24px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.nav button{
+    border:0;
+    padding:12px 18px;
+    background:white;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.nav button:hover,
+.nav button.active{
+    background:#f4c916;
+    color:hwb(220 9% 89%);
+}
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.card{
+    background:hwb(309 5% 5%);
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(51, 38, 38, 0.0784313725490196);
+}
+
+.card h3{
+    margin:0 0 10px;
+    color:#555;
+}
+
+.card strong{
+    font-size:28px;
+    color:#2a312c;
+}
+
+.form-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:11px;
+    border:1px solid #261d1d;
+    border-radius:7px;
+    outline:none;
+}
+
+input:focus,select:focus,textarea:focus{
+    border-color:#2563eb;
+}
+
+textarea{
+    min-height:80px;
+    resize:vertical;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.btn{
+    border:0;
+    padding:11px 16px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.table-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:700px;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+th{
+    background:#f1f5f9;
+}
+
+.search-box{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.search-box input,
+.search-box select{
+    max-width:300px;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.completed{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.cancelled{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    display:block;
+    background:#8a0606;
+    color:#991b1b;
+}
+
+.actions{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+}
+
+@media(max-width:800px){
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+}
+
+@media(max-width:500px){
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .search-box{
+        flex-direction:column;
+    }
+
+    .search-box input,
+    .search-box select{
+        max-width:none;
+    }
+
+    .nav button{
+        flex:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Tailor Shop Management</h1>
+</header>
+
+<div class="container">
+
+<div class="nav">
+    <button class="active" onclick="showSection('dashboard',this)">Dashboard</button>
+    <button onclick="showSection('customers',this)">Customers</button>
+    <button onclick="showSection('measurements',this)">Measurements</button>
+    <button onclick="showSection('newOrder',this)">New Order</button>
+    <button onclick="showSection('orders',this)">All Orders</button>
+    <button onclick="showSection('payments',this)">Payments</button>
+</div>
+
+<div id="message" class="message"></div>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="section active">
+
+<h2>Dashboard</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Customers</h3>
+<strong id="totalCustomers">0</strong>
+</div>
+
+<div class="card">
+<h3>Total Orders</h3>
+<strong id="totalOrders">0</strong>
+</div>
+
+<div class="card">
+<h3>Pending Orders</h3>
+<strong id="pendingOrders">0</strong>
+</div>
+
+<div class="card">
+<h3>Total Revenue</h3>
+<strong id="totalRevenue">Rs 0</strong>
+</div>
+
+</div>
+
+<div class="form-box" style="margin-top:20px">
+
+<h3 style="margin-top:0">Backup</h3>
+
+<div class="actions">
+
+<button type="button" class="btn btn-success" onclick="shareBackup()">
+Share Backup (WhatsApp)
+</button>
+
+<button type="button" class="btn btn-primary" onclick="downloadBackup()">
+Download Backup
+</button>
+
+<button type="button" class="btn btn-warning"
+onclick="document.getElementById('restoreFile').click()">
+Restore Data
+</button>
+
+<input type="file" id="restoreFile" accept=".json"
+style="display:none" onchange="restoreBackup(this)">
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CUSTOMERS -->
+
+<section id="customers" class="section">
+
+<h2>Customer Management</h2>
+
+<div class="form-box">
+
+<form id="customerForm">
+
+<div class="form-grid">
+
+<div>
+<label>Customer Name *</label>
+<input type="text" id="customerName" required>
+</div>
+
+<div>
+<label>Phone *</label>
+<input type="tel" id="customerPhone" required>
+</div>
+
+<div class="full">
+<label>Address</label>
+<input type="text" id="customerAddress">
+</div>
+
+<div>
+<label>Gender</label>
+<select id="customerGender">
+<option value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+</select>
+</div>
+
+</div>
+
+<br>
+
+<button class="btn btn-primary" type="submit">
+Add Customer
+</button>
+
+</form>
+
+</div>
+
+<div class="table-box">
+
+<div class="search-box">
+<input type="text" id="customerSearch"
+placeholder="Search customer..."
+oninput="renderCustomers()">
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Address</th>
+<th>Gender</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="customerTable"></tbody>
+</table>
+
+</div>
+
+</section>
+
+
+<!-- MEASUREMENTS -->
+
+<section id="measurements" class="section">
+
+<h2>Customer Measurements</h2>
+
+<div class="form-box">
+
+<form id="measurementForm">
+
+<div class="form-grid">
+
+<div>
+<label>Customer *</label>
+<select id="measurementCustomer" required></select>
+</div>
+
+<div>
+<label>Shirt Length</label>
+<input type="number" id="shirtLength" min="0">
+</div>
+
+<div>
+<label>Chest</label>
+<input type="number" id="chest" min="0">
+</div>
+
+<div>
+<label>Waist</label>
+<input type="number" id="waist" min="0">
+</div>
+
+<div>
+<label>Shoulder</label>
+<input type="number" id="shoulder" min="0">
+</div>
+
+<div>
+<label>Sleeve</label>
+<input type="number" id="sleeve" min="0">
+</div>
+
+<div>
+<label>Pant Length</label>
+<input type="number" id="pantLength" min="0">
+</div>
+
+<div>
+<label>Hip</label>
+<input type="number" id="hip" min="0">
+</div>
+
+<div class="full">
+<label>Notes</label>
+<textarea id="measurementNotes"></textarea>
+</div>
+
+</div>
+
+<br>
+
+<button class="btn btn-primary" type="submit">
+Save Measurement
+</button>
+
+</form>
+
+</div>
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>Customer</th>
+<th>Chest</th>
+<th>Waist</th>
+<th>Shoulder</th>
+<th>Sleeve</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="measurementTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- NEW ORDER -->
+
+<section id="newOrder" class="section">
+
+<h2>New Order</h2>
+
+<div class="form-box">
+
+<form id="orderForm">
+
+<div class="form-grid">
+
+<div>
+<label>Customer *</label>
+<select id="orderCustomer" required></select>
+</div>
+
+<div>
+<label>Dress Type *</label>
+<select id="dressType" required>
+<option value="">Select</option>
+<option>Shalwar Kameez</option>
+<option>Shirt</option>
+<option>Pant</option>
+<option>Suit</option>
+<option>Waistcoat</option>
+</select>
+</div>
+
+<div>
+<label>Order Date *</label>
+<input type="date" id="orderDate" required>
+</div>
+
+<div>
+<label>Delivery Date *</label>
+<input type="date" id="deliveryDate" required>
+</div>
+
+<div>
+<label>Total Price *</label>
+<input type="number" id="orderPrice" min="1" required>
+</div>
+
+<div>
+<label>Advance Payment</label>
+<input type="number" id="orderAdvance" min="0" value="0">
+</div>
+
+<div>
+<label>Status</label>
+<select id="orderStatus">
+<option>Pending</option>
+<option>Completed</option>
+<option>Cancelled</option>
+</select>
+</div>
+
+<div class="full">
+<label>Notes</label>
+<textarea id="orderNotes"></textarea>
+</div>
+
+</div>
+
+<br>
+
+<button class="btn btn-success" type="submit">
+Create Order
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<!-- ALL ORDERS -->
+
+<section id="orders" class="section">
+
+<h2>All Orders</h2>
+
+<div class="table-box">
+
+<div class="search-box">
+
+<input
+type="text"
+id="orderSearch"
+placeholder="Search orders..."
+oninput="renderOrders()">
+
+<select id="statusFilter" onchange="renderOrders()">
+<option value="">All Status</option>
+<option>Pending</option>
+<option>Completed</option>
+<option>Cancelled</option>
+</select>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Customer</th>
+<th>Dress</th>
+<th>Order Date</th>
+<th>Delivery</th>
+<th>Total</th>
+<th>Paid</th>
+<th>Due</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="orderTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- PAYMENTS -->
+
+<section id="payments" class="section">
+
+<h2>Payments</h2>
+
+<div class="form-box">
+
+<form id="paymentForm">
+
+<div class="form-grid">
+
+<div>
+<label>Order *</label>
+<select id="paymentOrder" required></select>
+</div>
+
+<div>
+<label>Payment Amount *</label>
+<input type="number" id="paymentAmount" min="1" required>
+</div>
+
+</div>
+
+<br>
+
+<button class="btn btn-success" type="submit">
+Add Payment
+</button>
+
+</form>
+
+</div>
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>Customer</th>
+<th>Order</th>
+<th>Total</th>
+<th>Paid</th>
+<th>Due</th>
+</tr>
+</thead>
+
+<tbody id="paymentTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+let customers =
+JSON.parse(localStorage.getItem("customers")) || [];
+
+let measurements =
+JSON.parse(localStorage.getItem("measurements")) || [];
+
+let orders =
+JSON.parse(localStorage.getItem("orders")) || [];
+
+let payments =
+JSON.parse(localStorage.getItem("payments")) || [];
+
+
+/* SAVE DATA */
+
+function saveData(){
+
+localStorage.setItem(
+"customers",
+JSON.stringify(customers)
+);
+
+localStorage.setItem(
+"measurements",
+JSON.stringify(measurements)
+);
+
+localStorage.setItem(
+"orders",
+JSON.stringify(orders)
+);
+
+localStorage.setItem(
+"payments",
+JSON.stringify(payments)
+);
+
+}
+
+
+/* MESSAGE */
+
+function showMessage(message,type="success"){
+
+const box=document.getElementById("message");
+
+box.textContent=message;
+
+box.className="message "+type;
+
+setTimeout(()=>{
+box.className="message";
+},2500);
+
+}
+
+
+/* NAVIGATION */
+
+function showSection(id,button){
+
+document.querySelectorAll(".section")
+.forEach(section=>{
+section.classList.remove("active");
+});
+
+document.getElementById(id)
+.classList.add("active");
+
+document.querySelectorAll(".nav button")
+.forEach(btn=>{
+btn.classList.remove("active");
+});
+
+button.classList.add("active");
+
+refreshAll();
+
+}
+
+
+/* CUSTOMER */
+
+document.getElementById("customerForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const name =
+document.getElementById("customerName").value.trim();
+
+const phone =
+document.getElementById("customerPhone").value.trim();
+
+if(name.length<2){
+
+showMessage("Customer name is required","error");
+return;
+
+}
+
+if(phone.length<5){
+
+showMessage("Enter a valid phone number","error");
+return;
+
+}
+
+customers.push({
+
+id:Date.now(),
+
+name:name,
+
+phone:phone,
+
+address:
+document.getElementById("customerAddress").value.trim(),
+
+gender:
+document.getElementById("customerGender").value
+
+});
+
+saveData();
+
+this.reset();
+
+showMessage("Customer added successfully");
+
+refreshAll();
+
+});
+
+
+function renderCustomers(){
+
+const tbody =
+document.getElementById("customerTable");
+
+const search =
+document.getElementById("customerSearch")
+.value.toLowerCase();
+
+tbody.innerHTML="";
+
+customers
+.filter(c =>
+c.name.toLowerCase().includes(search) ||
+c.phone.toLowerCase().includes(search)
+)
+.forEach(c=>{
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${escapeHTML(c.name)}</td>
+
+<td>${escapeHTML(c.phone)}</td>
+
+<td>${escapeHTML(c.address || "-")}</td>
+
+<td>${escapeHTML(c.gender || "-")}</td>
+
+<td>
+
+<div class="actions">
+
+<button class="btn btn-danger"
+onclick="deleteCustomer(${c.id})">
+Delete
+</button>
+
+</div>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+function deleteCustomer(id){
+
+const hasOrder =
+orders.some(o=>o.customerId===id);
+
+if(hasOrder){
+
+showMessage(
+"Cannot delete customer with existing orders",
+"error"
+);
+
+return;
+
+}
+
+if(!confirm("Delete this customer?")) return;
+
+customers =
+customers.filter(c=>c.id!==id);
+
+measurements =
+measurements.filter(m=>m.customerId!==id);
+
+saveData();
+
+refreshAll();
+
+showMessage("Customer deleted");
+
+}
+
+
+/* MEASUREMENT */
+
+function updateCustomerSelects(){
+
+const selects=[
+"measurementCustomer",
+"orderCustomer"
+];
+
+selects.forEach(id=>{
+
+const select=document.getElementById(id);
+
+if(!select) return;
+
+select.innerHTML=
+'<option value="">Select Customer</option>';
+
+customers.forEach(c=>{
+
+select.innerHTML+=
+`<option value="${c.id}">
+${escapeHTML(c.name)} - ${escapeHTML(c.phone)}
+</option>`;
+
+});
+
+});
+
+}
+
+
+document.getElementById("measurementForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const customerId =
+Number(document.getElementById(
+"measurementCustomer").value);
+
+if(!customerId){
+
+showMessage("Select a customer","error");
+return;
+
+}
+
+measurements =
+measurements.filter(
+m=>m.customerId!==customerId
+);
+
+measurements.push({
+
+id:Date.now(),
+
+customerId:customerId,
+
+shirtLength:
+Number(document.getElementById("shirtLength").value)||0,
+
+chest:
+Number(document.getElementById("chest").value)||0,
+
+waist:
+Number(document.getElementById("waist").value)||0,
+
+shoulder:
+Number(document.getElementById("shoulder").value)||0,
+
+sleeve:
+Number(document.getElementById("sleeve").value)||0,
+
+pantLength:
+Number(document.getElementById("pantLength").value)||0,
+
+hip:
+Number(document.getElementById("hip").value)||0,
+
+notes:
+document.getElementById("measurementNotes").value.trim()
+
+});
+
+saveData();
+
+this.reset();
+
+showMessage("Measurement saved");
+
+renderMeasurements();
+
+});
+
+
+function renderMeasurements(){
+
+const tbody=
+document.getElementById("measurementTable");
+
+tbody.innerHTML="";
+
+measurements.forEach(m=>{
+
+const customer=
+customers.find(c=>c.id===m.customerId);
+
+if(!customer) return;
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${escapeHTML(customer.name)}</td>
+
+<td>${m.chest}</td>
+
+<td>${m.waist}</td>
+
+<td>${m.shoulder}</td>
+
+<td>${m.sleeve}</td>
+
+<td>
+
+<button
+class="btn btn-danger"
+onclick="deleteMeasurement(${m.id})">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+function deleteMeasurement(id){
+
+if(!confirm("Delete measurement?")) return;
+
+measurements=
+measurements.filter(m=>m.id!==id);
+
+saveData();
+
+renderMeasurements();
+
+showMessage("Measurement deleted");
+
+}
+
+
+/* ORDER */
+
+document.getElementById("orderForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const customerId =
+Number(document.getElementById(
+"orderCustomer").value);
+
+const price =
+Number(document.getElementById("orderPrice").value);
+
+const advance =
+Number(document.getElementById("orderAdvance").value)||0;
+
+const orderDate =
+document.getElementById("orderDate").value;
+
+const deliveryDate =
+document.getElementById("deliveryDate").value;
+
+if(!customerId){
+
+showMessage("Select customer","error");
+return;
+
+}
+
+if(price<=0){
+
+showMessage("Enter valid price","error");
+return;
+
+}
+
+if(advance<0 || advance>price){
+
+showMessage(
+"Advance cannot be greater than total price",
+"error"
+);
+
+return;
+
+}
+
+if(deliveryDate<orderDate){
+
+showMessage(
+"Delivery date cannot be before order date",
+"error"
+);
+
+return;
+
+}
+
+orders.push({
+
+id:Date.now(),
+
+customerId:customerId,
+
+dress:
+document.getElementById("dressType").value,
+
+orderDate:orderDate,
+
+deliveryDate:deliveryDate,
+
+price:price,
+
+paid:advance,
+
+status:
+document.getElementById("orderStatus").value,
+
+notes:
+document.getElementById("orderNotes").value.trim()
+
+});
+
+saveData();
+
+this.reset();
+
+document.getElementById("orderDate").value=
+new Date().toISOString().split("T")[0];
+
+showMessage("Order created successfully");
+
+refreshAll();
+
+});
+
+
+function renderOrders(){
+
+const tbody=
+document.getElementById("orderTable");
+
+const search=
+document.getElementById("orderSearch").value
+.toLowerCase();
+
+const status=
+document.getElementById("statusFilter").value;
+
+tbody.innerHTML="";
+
+orders
+.filter(o=>{
+
+const customer=
+customers.find(c=>c.id===o.customerId);
+
+if(!customer) return false;
+
+const matchesSearch =
+customer.name.toLowerCase().includes(search) ||
+o.dress.toLowerCase().includes(search);
+
+const matchesStatus =
+!status || o.status===status;
+
+return matchesSearch && matchesStatus;
+
+})
+.forEach(o=>{
+
+const customer=
+customers.find(c=>c.id===o.customerId);
+
+const due=o.price-o.paid;
+
+let badgeClass="pending";
+
+if(o.status==="Completed")
+badgeClass="completed";
+
+if(o.status==="Cancelled")
+badgeClass="cancelled";
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${escapeHTML(customer.name)}</td>
+
+<td>${escapeHTML(o.dress)}</td>
+
+<td>${o.orderDate}</td>
+
+<td>${o.deliveryDate}</td>
+
+<td>Rs ${o.price}</td>
+
+<td>Rs ${o.paid}</td>
+
+<td>Rs ${due}</td>
+
+<td>
+<span class="badge ${badgeClass}">
+${o.status}
+</span>
+</td>
+
+<td>
+
+<div class="actions">
+
+<button
+class="btn btn-warning"
+onclick="toggleOrderStatus(${o.id})">
+Status
+</button>
+
+<button
+class="btn btn-danger"
+onclick="deleteOrder(${o.id})">
+Delete
+</button>
+
+</div>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+function toggleOrderStatus(id){
+
+const order=
+orders.find(o=>o.id===id);
+
+if(!order) return;
+
+if(order.status==="Pending")
+order.status="Completed";
+
+else if(order.status==="Completed")
+order.status="Cancelled";
+
+else
+order.status="Pending";
+
+saveData();
+
+refreshAll();
+
+showMessage("Order status updated");
+
+}
+
+
+function deleteOrder(id){
+
+if(!confirm("Delete this order?")) return;
+
+orders=
+orders.filter(o=>o.id!==id);
+
+payments=
+payments.filter(p=>p.orderId!==id);
+
+saveData();
+
+refreshAll();
+
+showMessage("Order deleted");
+
+}
+
+
+/* PAYMENT */
+
+function updatePaymentSelect(){
+
+const select=
+document.getElementById("paymentOrder");
+
+select.innerHTML=
+'<option value="">Select Order</option>';
+
+orders.forEach(o=>{
+
+const customer=
+customers.find(c=>c.id===o.customerId);
+
+if(!customer) return;
+
+const due=o.price-o.paid;
+
+if(due>0){
+
+select.innerHTML+=`
+
+<option value="${o.id}">
+
+${escapeHTML(customer.name)}
+ - ${escapeHTML(o.dress)}
+ - Due Rs ${due}
+
+</option>
+
+`;
+
+}
+
+});
+
+}
+
+
+document.getElementById("paymentForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const orderId=
+Number(document.getElementById("paymentOrder").value);
+
+const amount=
+Number(document.getElementById("paymentAmount").value);
+
+const order=
+orders.find(o=>o.id===orderId);
+
+if(!order){
+
+showMessage("Select an order","error");
+return;
+
+}
+
+if(amount<=0){
+
+showMessage("Enter valid payment","error");
+return;
+
+}
+
+const due=
+order.price-order.paid;
+
+if(amount>due){
+
+showMessage(
+"Payment cannot be greater than due amount",
+"error"
+);
+
+return;
+
+}
+
+order.paid+=amount;
+
+payments.push({
+
+id:Date.now(),
+
+orderId:orderId,
+
+amount:amount,
+
+date:new Date().toISOString().split("T")[0]
+
+});
+
+saveData();
+
+this.reset();
+
+showMessage("Payment added successfully");
+
+refreshAll();
+
+});
+
+
+function renderPayments(){
+
+const tbody=
+document.getElementById("paymentTable");
+
+tbody.innerHTML="";
+
+orders.forEach(o=>{
+
+const customer=
+customers.find(c=>c.id===o.customerId);
+
+if(!customer) return;
+
+const due=o.price-o.paid;
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${escapeHTML(customer.name)}</td>
+
+<td>${escapeHTML(o.dress)}</td>
+
+<td>Rs ${o.price}</td>
+
+<td>Rs ${o.paid}</td>
+
+<td>Rs ${due}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+  
